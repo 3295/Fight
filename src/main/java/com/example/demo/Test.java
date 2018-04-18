@@ -14,7 +14,11 @@ public class Test {
 
         Out.Inner inner=new Out().new Inner();
         Out.StaticInner inner1=new Out.StaticInner();
-
+        String tt="sc_cd_wh";
+        String[] t=tt.split("_");
+        for (String s:t) {
+            System.out.println(s);
+        }
 
     }
 

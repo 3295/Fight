@@ -106,7 +106,7 @@
 
 	</dependencies>
 	<build>
-        <finalName>${groupId}-${artifactId}-${version}</finalName>
+        <finalName>${artifactId}</finalName>
 		<plugins>
 
             <!--编译Java源码，一般只需设置编译的jdk版本-->
