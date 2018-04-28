@@ -26,6 +26,16 @@ public class Test {
         }
 
         NIOTest();
+        System.out.println("============================================================");
+        System.out.println("1 << 4="+(1 << 4));
+        System.out.println("1 << 0="+(1 << 0));
+        System.out.println("1 << 2="+(1 << 2));
+        System.out.println("1 << 3="+(1 << 3));
+        System.out.println("1|4="+(1|4));
+        System.out.println("1|8="+(1|8));
+        System.out.println("1|16="+(1|16));
+        System.out.println("1|16="+(4|8));
+        System.out.println("1|16="+(4|16));
     }
 
 
@@ -34,7 +44,7 @@ public class Test {
      * @throws Exception
      */
     public static void NIOTest(){
-        System.out.println("==============================NIO==============================");
+
         try {
             RandomAccessFile file = new RandomAccessFile("F:/test.log", "rw");
 
