@@ -33,4 +33,34 @@
       user_sex = #{userSex,jdbcType=TINYINT}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <select id="getCityInfo" resultType="map">
+    SELECT * FROM cityinfo WHERE 1=1
+    <if test="districtName != null">
+      AND Name=#{districtName}
+    </if>
+    <if test="provinceName != null">
+      AND ProvinceName=#{provinceName}
+    </if>
+    <if test="cityName != null">
+      AND cityName=#{cityName}
+    </if>
+    limit 1
+  </select>
+  <select id="getCityInfo2" resultType="map" parameterType="string">
+  SELECT * FROM cityinfo WHERE name=#{name} limit 1
+</select>
+
+  <select id="getCityInfo3" resultType="map">
+    SELECT * FROM cityinfo WHERE name=#{name}
+    <if test="province!=null">
+      and provinceName=#{province}
+    </if>
+    <if test="city!=null">
+      and cityName=#{city}
+    </if>
+  </select>
+  <update id="updateAdCode">
+    UPDATE cityinfo SET adcode=#{adcode} where Id=#{id}
+  </update>
 </mapper>

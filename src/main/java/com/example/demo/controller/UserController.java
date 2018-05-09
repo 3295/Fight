@@ -1,7 +1,13 @@
 package com.example.demo.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.jc.tools.HttpClientUtil;
+import com.mysql.cj.xdevapi.JsonArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +20,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class UserController {
@@ -60,6 +67,7 @@ public class UserController {
         return "failed";
     }
 
+
     private void saveVisitor(HttpServletRequest request){
         String ip = request.getHeader("X-forwarded-for");
         System.out.println("=======>"+ip);
@@ -79,5 +87,68 @@ public class UserController {
             ip = request.getRemoteAddr();
         }
         System.out.println("=======>"+ip);
+    }
+
+    String provinceName=null;
+    String cityName=null;
+    String districtName=null;
+    List<String> list=new ArrayList<>();
+
+    @ResponseBody
+    @RequestMapping("/area")
+    public String area() {
+        String res=HttpClientUtil.httpRequest("http://restapi.amap.com/v3/config/district?key=0a39ea1e1dbe74927df23cd5b16e4e39&subdistrict=3");
+        JSONObject json= JSON.parseObject(res);
+        JSONArray jsonArray=json.getJSONArray("districts");
+        json= JSON.parseObject(jsonArray.get(0).toString());
+        jsonArray=json.getJSONArray("districts");
+        recursive(jsonArray);
+        for (String s:list) {
+            System.out.println(s);
+        }
+        System.out.println("===>"+list.size());
+        return "success";
+    }
+
+
+
+    public void recursive(JSONArray jsonArray){
+        for (int i=0;i<jsonArray.size();i++){
+            JSONObject jb=JSONObject.parseObject(jsonArray.get(i).toString());
+            String level=jb.getString("level");
+            String name=jb.getString("name");
+            if (level.equals("province")){
+                provinceName=name;
+                cityName=null;
+                districtName=null;
+            }else if (level.equals("city")){
+                cityName = name;
+                districtName = null;
+//                if (name.equals("重庆郊县")) cityName=null;
+            }else if (level.equals("district")) {
+                districtName = name;
+            }
+
+//            if (userService.getCityInfo2(name)==null){
+//                if (!level.equals("street")) {
+//                    list.add(level + ":" + provinceName + "--" + cityName + "--" + districtName + "--(" + name + ")");
+//                }
+//            }
+
+            List<Map> maps=userService.getCityInfo3(provinceName,cityName,name);
+            if (maps==null||maps.size()==0||maps.size()>1){
+                if (!level.equals("street")) {
+                    list.add(level + ":" + provinceName + "--" + cityName + "--" + districtName + "--(" + name + ")");
+                }
+            }else {
+                System.out.println(maps.get(0).get("Id")+"<=====>"+jb.getString("adcode"));
+                userService.updateAdCode(maps.get(0).get("Id"),jb.getString("adcode"));
+            }
+
+            JSONArray array=jb.getJSONArray("districts");
+            if (array!=null&&array.size()>0){
+                recursive(array);
+            }
+        }
     }
 }

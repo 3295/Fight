@@ -25,6 +25,7 @@ public class ClientTest {
             }
             System.out.println("===========服务器连接成功===========");
 
+            //模拟给服务器发送消息
             new Thread(new Runnable() {
                 @Override
                 public void run() {

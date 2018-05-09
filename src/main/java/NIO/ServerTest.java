@@ -53,7 +53,6 @@ public class ServerTest{
                 Iterator iterator = selectedKeys.iterator();
                 while (iterator.hasNext()) {
                     SelectionKey theKey = (SelectionKey) iterator.next();
-
                     if (theKey.isAcceptable()) {
                         System.out.println("...accept:客户端请求连接...");
                         //获取当前通道
