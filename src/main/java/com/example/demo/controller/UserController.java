@@ -1,24 +1,28 @@
 package com.example.demo.controller;
 
+import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.blueteam.common.api.GoodsService;
+import com.blueteam.common.dto.GoodsDTO;
+import com.blueteam.common.entity.Goods;
 import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
-import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.jc.tools.CalendarUtil;
 import com.jc.tools.HttpClientUtil;
-import com.mysql.cj.xdevapi.JsonArray;
+import freemarker.template.utility.DateUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +34,9 @@ public class UserController {
 
     @Resource
     private UserService userService;
+
+    @Reference
+    private GoodsService goodsService;
 
     @RequestMapping("/test")
     public String hello() {
@@ -48,7 +55,14 @@ public class UserController {
 
     @ResponseBody
     @RequestMapping("/test2")
-    public String helloWord() {
+    public String helloWord() throws Exception{
+        Date date= CalendarUtil.parse("2017-05-24 15:04:42");
+        List<GoodsDTO> good=goodsService.getDetailListByUpdateTime(date);
+        System.out.println(good.size()+"==>"+JSONObject.toJSON(good));
+//        List<Goods> list=goodsService.getPageGoods(1,9);
+//        for (Goods goods:list) {
+//            System.out.println("==>"+JSONObject.toJSON(goods));
+//        }
         return "hello world";
     }
 
